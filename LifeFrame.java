@@ -48,6 +48,11 @@ public class LifeFrame extends JFrame implements Runnable
 						if(running){running = false;}
 						else{running = true;}
 					}
+					else if(e.getKeyCode() == KeyEvent.VK_C)
+					{
+						living = new boolean[cx][cy];
+						repaint();
+					}
 					}
 					public void keyTyped(KeyEvent e){}
 					});
@@ -116,7 +121,8 @@ public class LifeFrame extends JFrame implements Runnable
 	}
 
 	private void tick()
-	{
+	{	
+		boolean[][] temp = new boolean[cx][cy];
 		for(int i = 0; i < cx; i++)
 		{
 			for(int j = 0; j < cy; j++)
@@ -124,26 +130,33 @@ public class LifeFrame extends JFrame implements Runnable
 				int sum=countcell(i,j);
 				if(living[i][j])
 				{
-					if(sum < 2 || sum ==4)
+					if(sum<2 || sum >=4)
 					{
-						living[i][j] = false;
-					}		
-					else if(sum ==2 || sum==3)
-					{
-						living[i][j] = true;
+						temp[i][j] = false;
 					}
+					else
+					{
+						temp[i][j] = true;
+					}		
 				}
 				else
 				{
 					if(sum == 3)
 					{
-						living[i][j] = true;
+						temp[i][j] = true;
 					}
 					else
 					{
-						living[i][j] = false;
+						temp[i][j] = false;
 					}
 				}
+			}
+		}
+		for(int i = 0; i < cx; i++)
+		{
+			for(int j = 0; j < cy; j++)
+			{
+				living[i][j] = temp[i][j];
 			}
 		}
 	}
@@ -155,28 +168,16 @@ public class LifeFrame extends JFrame implements Runnable
 
 	private int countcell(int x, int y)
 	{
-		int dx = -1;
-		int dy = 0;
 		int sum = 0;
 		
-		for(int i = 0; i < 4; i++)
+		for(int i = -1; i <= 1; i++)
 		{
-			if(checkcell(x+dx,y+dy))
+			for(int j = -1; j <= 1; j++)
 			{
-				sum++;
-			}
-			if(i ==0)
-			{
-				dx = 1;
-			}
-			if(i ==1)
-			{
-				dx = 0;
-				dy = 1;
-			}
-			if(i==2)
-			{
-				dy = -1;
+				if(checkcell(x+i,y+j)&&!(i==0 && j==0))
+				{
+					sum++;
+				}
 			}
 		}
 		return sum;
