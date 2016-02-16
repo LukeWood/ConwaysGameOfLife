@@ -2,7 +2,11 @@ import javax.swing.JFrame;
 import java.lang.Thread;
 import java.awt.Graphics;
 import java.awt.Color;
-public class LifeFrame extends JFrame
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
+public class LifeFrame extends JFrame implements Runnable
 {
 	private static boolean getRandomBool()
 	{
@@ -13,10 +17,12 @@ public class LifeFrame extends JFrame
 	int cw, ch;
 	int cx = 50, cy= 50;
 	boolean running = true;
-	boolean[][] living;
+	boolean[][] living = new boolean[cx][cy];
+	
 	public LifeFrame()
 	{
-		super("Conway's Game of Life");
+		super("Conway's Game of Life");	
+		
 		width = 750;
 		cw = width/cx;
 		height = 750;
@@ -26,13 +32,58 @@ public class LifeFrame extends JFrame
 		this.setVisible(true);
 
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		//Add mouse listener
-		init();
+		this.addKeyListener(new KeyListener()
+					{
+					public void keyPressed(KeyEvent e)
+					{
+					}
+					public void keyReleased(KeyEvent e)
+					{
+					if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE)
+					{
+						if(running){running = false;}
+						else{running = true;}
+					}
+					}
+					public void keyTyped(KeyEvent e){}
+					});
+		this.addMouseListener(new MouseListener()
+				{
+					boolean clicked = false;
+					public void mousePressed(MouseEvent e)
+					{
+						clicked = true;
+						int xpos = e.getX();
+						int ypos = e.getY();
+						xpos = xpos/cw;
+						ypos = ypos/ch;
+						if(xpos > 0 && xpos < cx &&ypos > 0 &&ypos <cy)
+						{
+							if(living[xpos][ypos]) 
+		       					{
+								living[xpos][ypos]= false;
+							}
+							else
+							{
+								living[xpos][ypos] = true;
+							}
+							repaint();
+						}
+					}
+					public void mouseReleased(MouseEvent e)
+					{
+						clicked = false;
+					}		
+				
+					public void mouseEntered(MouseEvent e){}
+					public void mouseExited(MouseEvent e){}
+					public void mouseClicked(MouseEvent e){}
+				});
+			init();
 	}
 
 	private void init()
 	{
-		living = new boolean[cx][cy];
 		for(int i = 0; i < cx; i++)
 		{
 			for(int j = 0; j < cy; j++)
@@ -40,24 +91,28 @@ public class LifeFrame extends JFrame
 				living[i][j] = getRandomBool();
 			}
 		}
-		while(running)
+		Thread t = new Thread(this);
+		t.start();
+	}
+	public void run()
+	{	
+		while(true)
 		{
-			tick();
-			repaint();
-			try
+			if(running)
 			{
-			Thread.sleep(1000);
-			}
-			catch(Exception e)
-			{
-			
+				tick();
+				repaint();
+				try
+				{
+					Thread.sleep(1000);
+				}
+				catch(Exception e){}
 			}
 		}
 	}
 
 	private void tick()
 	{
-		boolean[][] temp = new boolean[cx][cy];
 		for(int i = 0; i < cx; i++)
 		{
 			for(int j = 0; j < cy; j++)
@@ -67,28 +122,33 @@ public class LifeFrame extends JFrame
 				{
 					if(sum < 2 || sum ==4)
 					{
-						temp[i][j] = false;
+						living[i][j] = false;
 					}		
 					else if(sum ==2 || sum==3)
 					{
-						temp[i][j] = true;
+						living[i][j] = true;
 					}
 				}
 				else
 				{
 					if(sum == 3)
 					{
-						temp[i][j] = true;
+						living[i][j] = true;
 					}
 					else
 					{
-						temp[i][j] = false;
+						living[i][j] = false;
 					}
 				}
 			}
 		}
-		living = temp;
 	}
+
+	private void stop()
+	{
+		running = false;
+	}
+
 	private int countcell(int x, int y)
 	{
 		int dx = -1;
@@ -133,20 +193,28 @@ public class LifeFrame extends JFrame
 	public void paint(Graphics g)
 	{
 		g.setColor(Color.black);
-		for(int i = cw; i < 750; i+=cw)
-		{
-				g.drawLine(i,0,i,750);
-				g.drawLine(0,i,750,i);
-		}
 		for(int i = 0; i < cx; i++)
 		{
 			for(int j = 0; j < cy; j++)
 			{
 				if(living[i][j])
 				{
+					g.setColor(Color.black);
+					g.fillRect(i*cw,j*ch,cw,ch);
+				}
+				else
+				{
+					g.setColor(Color.white);
 					g.fillRect(i*cw,j*ch,cw,ch);
 				}
 			}
 		}
+		g.setColor(Color.black);
+		for(int i = cw; i < 750; i+=cw)
+		{
+				g.drawLine(i,0,i,750);
+				g.drawLine(0,i,750,i);
+		}
+
 	}
 }
