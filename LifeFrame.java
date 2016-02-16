@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 public class LifeFrame extends JFrame implements Runnable
 {
 	private static boolean getRandomBool()
@@ -18,7 +19,8 @@ public class LifeFrame extends JFrame implements Runnable
 	int cx = 50, cy= 50;
 	boolean running = true;
 	boolean[][] living = new boolean[cx][cy];
-	
+	BufferedImage toDraw;
+	Graphics bg;
 	public LifeFrame()
 	{
 		super("Conway's Game of Life");	
@@ -28,6 +30,8 @@ public class LifeFrame extends JFrame implements Runnable
 		height = 750;
 		ch = height/cy;
 		this.setSize(width,height);
+		toDraw = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+		bg=  toDraw.getGraphics();
 		this.setResizable(false);
 		this.setVisible(true);
 
@@ -189,32 +193,37 @@ public class LifeFrame extends JFrame implements Runnable
 			return living[xc][yc];
 		}
 	}
-
+	
 	public void paint(Graphics g)
 	{
-		g.setColor(Color.black);
+		
+		bg.setColor(Color.black);
+		
 		for(int i = 0; i < cx; i++)
 		{
 			for(int j = 0; j < cy; j++)
 			{
 				if(living[i][j])
 				{
-					g.setColor(Color.black);
-					g.fillRect(i*cw,j*ch,cw,ch);
+					bg.setColor(Color.black);
+					bg.fillRect(i*cw,j*ch,cw,ch);
 				}
 				else
 				{
-					g.setColor(Color.white);
-					g.fillRect(i*cw,j*ch,cw,ch);
+					bg.setColor(Color.white);
+					bg.fillRect(i*cw,j*ch,cw,ch);
 				}
 			}
 		}
-		g.setColor(Color.black);
+
+		bg.setColor(Color.black);
 		for(int i = cw; i < 750; i+=cw)
 		{
-				g.drawLine(i,0,i,750);
-				g.drawLine(0,i,750,i);
+				bg.drawLine(i,0,i,750);
+				bg.drawLine(0,i,750,i);
 		}
+
+		g.drawImage(toDraw,0,0,null);
 
 	}
 }
