@@ -7,8 +7,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-public class LifeFrame extends JFrame implements Runnable
+public class Life extends JFrame implements Runnable
 {
+	public static void main(String[] args)
+	{
+		Life lf = new Life();
+	}
+
 	private static boolean getRandomBool()
 	{
 		return Math.random() >.5;
@@ -21,7 +26,7 @@ public class LifeFrame extends JFrame implements Runnable
 	boolean[][] living = new boolean[cx][cy];
 	BufferedImage toDraw;
 	Graphics bg;
-	public LifeFrame()
+	public Life()
 	{
 		super("Conway's Game of Life");	
 		
