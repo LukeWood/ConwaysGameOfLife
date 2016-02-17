@@ -122,6 +122,7 @@ public class Life extends JFrame implements Runnable
 				living[i][j] = getRandomBool();
 			}
 		}
+		repaint();
 	}
 	public void run()
 	{	
