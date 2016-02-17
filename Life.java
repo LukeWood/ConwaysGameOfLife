@@ -58,7 +58,7 @@ public class Life extends JFrame implements Runnable
 						living = new boolean[cx][cy];
 						repaint();
 					}
-					else if(e.getKeycode() == KeyEvent.VK_R)
+					else if(e.getKeyCode() == KeyEvent.VK_R)
 					{
 						randomize();
 					}
