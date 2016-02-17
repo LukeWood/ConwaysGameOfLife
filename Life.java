@@ -58,6 +58,10 @@ public class Life extends JFrame implements Runnable
 						living = new boolean[cx][cy];
 						repaint();
 					}
+					else if(e.getKeycode() == KeyEvent.VK_R)
+					{
+						randomize();
+					}
 					}
 					public void keyTyped(KeyEvent e){}
 					});
@@ -107,6 +111,17 @@ public class Life extends JFrame implements Runnable
 		}
 		Thread t = new Thread(this);
 		t.start();
+	}
+	private void randomize()
+	{
+		living = new boolean[cx][cy];
+		for(int i = 0; i < cx; i++)
+		{
+			for(int j = 0; j < cy; j++)
+			{
+				living[i][j] = getRandomBool();
+			}
+		}
 	}
 	public void run()
 	{	
